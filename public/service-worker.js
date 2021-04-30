@@ -46,17 +46,33 @@ self.addEventListener("activate", function (e) {
 });
 
 // Respond with cached resources
-self.addEventListener('fetch', function (e) {
-  console.log('fetch request : ' + e.request.url)
+self.addEventListener("fetch", function (e) {
+  if (e.request.url.includes("/api/transaction")) {
+    console.log("fetch request : " + e.request.url);
+
+    e.respondWith(
+      caches.open(CACHE_NAME).then(function (e) {
+        if (e.request) {
+          return fetch(e.request).then((response) => {
+            if (response.status === 200) {
+              cache.put(e.request.url, response.clone());
+            }
+            return response;
+          });
+        } else {
+          // if there are no cache, try fetching request
+          console.log("file is not cached, fetching : " + e.request);
+          return fetch(e.request);
+        }
+      })
+    );
+    return;
+  }
   e.respondWith(
-    caches.match(e.request).then(function (request) {
-      if (request) { // if cache is available, respond with cache
-        console.log('responding with cache : ' + e.request.url)
-        return request
-      } else {       // if there are no cache, try fetching request
-        console.log('file is not cached, fetching : ' + e.request.url)
-        return fetch(e.request)
-      }
+    caches.open(CACHE_NAME).then(cache => {
+      return cache.match(e.request).then(response => {
+        return response || fetch(e.request);
+      })
     })
   )
-})
+});
