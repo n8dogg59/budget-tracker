@@ -2,18 +2,10 @@ const APP_PREFIX = "Budget-";
 const VERSION = "version_01";
 const CACHE_NAME = APP_PREFIX + VERSION;
 const FILES_TO_CACHE = [
-  "/",
   "/index.html",
   "/js/idb.js",
-  "/js/index.js",
   "/css/styles.css",
-  "/icons/icon-72x72.png",
-  "/icons/icon-96x96.png",
-  "/icons/icon-144x144.png",
-  "/icons/icon-152x152.png",
-  "/icons/icon-192x192.png",
-  "/icons/icon-384x384.png",
-  "/icons/icon-512x512.png",
+  "/js/index.js"
 ];
 
 self.addEventListener("install", function (e) {
@@ -45,34 +37,46 @@ self.addEventListener("activate", function (e) {
   );
 });
 
-// Respond with cached resources
+// self.addEventListener('fetch', function (e) {
+//   console.log('Fetch request : ' + e.request.url)
+//   e.respondWith(
+//     caches.match(e.request).then(function (request) {
+//       if (request) {
+//         console.log('Responding to app fetch request with cached data: ' + e.request.url)
+//         return request
+//       } else {
+//         console.log('No cache available, fetching from network: ' + e.request.url)
+//         return fetch(e.request)
+//       }
+//     })
+//   )
+// });
+
+// // Respond with cached resources
 self.addEventListener("fetch", function (e) {
   if (e.request.url.includes("/api/transaction")) {
     console.log("fetch request : " + e.request.url);
-
     e.respondWith(
       caches.open(CACHE_NAME).then(function (e) {
-        if (e.request) {
-          return fetch(e.request).then((response) => {
+        return fetch(e.request)
+          .then((response) => {
             if (response.status === 200) {
               cache.put(e.request.url, response.clone());
             }
             return response;
+          })
+          .catch((err) => {
+            return cache.match(e.request);
           });
-        } else {
-          // if there are no cache, try fetching request
-          console.log("file is not cached, fetching : " + e.request);
-          return fetch(e.request);
-        }
       })
     );
     return;
-  }
+  } else 
   e.respondWith(
-    caches.open(CACHE_NAME).then(cache => {
-      return cache.match(e.request).then(response => {
+    caches.open(CACHE_NAME).then((cache) => {
+      return cache.match(e.request).then((response) => {
         return response || fetch(e.request);
-      })
+      });
     })
-  )
+  );
 });
