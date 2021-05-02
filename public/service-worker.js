@@ -1,12 +1,22 @@
 const APP_PREFIX = "Budget-";
-const VERSION = "version_01";
+const VERSION = "version_02";
 const CACHE_NAME = APP_PREFIX + VERSION;
 const FILES_TO_CACHE = [
-  "/index.html",
-  "/js/idb.js",
-  "/css/styles.css",
-  "/js/index.js"
+  "./index.html",
+  "./css/styles.css",
+  "./js/idb.js",
+  "./js/index.js",
+  "./manifest.json",
+  "./icons/icon-72x72.png",
+  "./icons/icon-96x96.png",
+  "./icons/icon-128x128.png",
+  "./icons/icon-144x144.png",
+  "./icons/icon-152x152.png",
+  "./icons/icon-192x192.png",
+  "./icons/icon-384x384.png",
+  "./icons/icon-512x512.png"
 ];
+
 
 self.addEventListener("install", function (e) {
   e.waitUntil(
@@ -54,7 +64,7 @@ self.addEventListener("activate", function (e) {
 
 // // Respond with cached resources
 self.addEventListener("fetch", function (e) {
-  if (e.request.url.includes("/api/transaction")) {
+  if (e.request.url.includes("/api/")) {
     console.log("fetch request : " + e.request.url);
     e.respondWith(
       caches.open(CACHE_NAME).then(function (e) {
@@ -71,12 +81,19 @@ self.addEventListener("fetch", function (e) {
       })
     );
     return;
-  } else 
+  } 
   e.respondWith(
-    caches.open(CACHE_NAME).then((cache) => {
-      return cache.match(e.request).then((response) => {
-        return response || fetch(e.request);
+    fetch(e.request).catch(function() {
+      return caches.match(e.request).then(function(response) {
+        if (response) {
+          return response;
+        } else if (e.request.headers.get("accept").includes("text/html")) {
+          // return the cached home page for all requests for html pages
+          return caches.match("/");
+        }
       });
     })
   );
+
+  
 });

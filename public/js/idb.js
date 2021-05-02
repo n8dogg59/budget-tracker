@@ -2,7 +2,7 @@
 let db;
 // establish a connection to IndexedDB database called 'budget' and set it to version 1
 const request = indexedDB.open("budget", 1);
-
+console.log(request);
 // this event will emit if the database version changes (nonexistant to version 1, v1 to v2, etc.)
 request.onupgradeneeded = function (event) {
   // save a reference to the database
@@ -18,7 +18,6 @@ request.onsuccess = function (event) {
 
   // check if app is online, if yes run uploadBudget() function to send all local db data to api
   if (navigator.onLine) {
-    // we haven't created this yet, but we will soon, so let's comment it out for now
     uploadBudget();
   }
 };
@@ -52,35 +51,39 @@ function uploadBudget() {
 
   // upon a successful .getAll() execution, run this function
   getAll.onsuccess = function () {
+    console.log(getAll.result.length);
     // if there was data in indexedDb's store, let's send it to the api server
     if (getAll.result.length > 0) {
-      fetch("/api/transaction", {
+      fetch("/api/transaction/bulk", {
         method: "POST",
         body: JSON.stringify(getAll.result),
         headers: {
           Accept: "application/json, text/plain, */*",
           "Content-Type": "application/json",
-        },
+        }
       })
-        .then((response) => response.json())
-        .then((serverResponse) => {
-          if (serverResponse.message) {
-            throw new Error(serverResponse);
-          }
+        .then((response) => {
+          console.log(response);
+          response.json()
+        })
+        .then(() => {
+          
           // open one more transaction
           const transaction = db.transaction(["new_budget"], "readwrite");
           // access the new_budget object store
           const budgetObjectStore = transaction.objectStore("new_budget");
           // clear all items in your store
+          console.log(budgetObjectStore);
           budgetObjectStore.clear();
+          
 
           alert("All saved budget data has been submitted!");
         })
-        .catch((err) => {
-          console.log(err);
-        });
+        .catch(err => {
+          // console.log(err);
+        })
     }
-  };
+  }
 }
 
 // listen for app coming back online
