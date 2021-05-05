@@ -48,55 +48,6 @@ self.addEventListener("activate", function (e) {
   );
 });
 
-// self.addEventListener('fetch', function (e) {
-//   console.log('Fetch request : ' + e.request.url)
-//   e.respondWith(
-//     caches.match(e.request).then(function (request) {
-//       if (request) {
-//         console.log('Responding to app fetch request with cached data: ' + e.request.url)
-//         return request
-//       } else {
-//         console.log('No cache available, fetching from network: ' + e.request.url)
-//         return fetch(e.request)
-//       }
-//     })
-//   )
-// });
-
-// // Respond with cached resources
-// self.addEventListener("fetch", function (e) {
-//   if (e.request.url.includes("/api/")) {
-//     console.log("fetch request : " + e.request.url);
-//     e.respondWith(
-//       caches.open(CACHE_NAME).then(function (e) {
-//         return fetch(e.request)
-//           .then((response) => {
-//             if (response.status === 200) {
-//               cache.put(e.request.url, response.clone());
-//             }
-//             return response;
-//           })
-//           .catch((err) => {
-//             return cache.match(e.request);
-//           });
-//       })
-//     );
-//     return;
-//   } 
-//   e.respondWith(
-//     fetch(e.request).catch(function() {
-//       return caches.match(e.request).then(function(response) {
-//         if (response) {
-//           return response;
-//         } else if (e.request.headers.get("accept").includes("text/html")) {
-//           // return the cached home page for all requests for html pages
-//           return caches.match("/");
-//         }
-//       });
-//     })
-//   );
-// });
-
 self.addEventListener('fetch', function (e) {
   console.log('from fetch');
   if (e.request.url.includes('/api/')) {

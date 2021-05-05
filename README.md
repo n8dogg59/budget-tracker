@@ -7,10 +7,10 @@ This application will give the user an easy way to add and subtract money from t
 To use this application please use the following link: .
 
 ## Github Repository
-https://github.com/n8dogg59/budget-tracker
+https://sleepy-chamber-60116.herokuapp.com/
 
 ## Screenshot
-![screenshot of budget-tracker homepage](public\screenshots\homepage.jpg)
+![screenshot of budget-tracker homepage](./public\screenshots\homepage.jpg)
 
 ## Built With
 * JavaScript
