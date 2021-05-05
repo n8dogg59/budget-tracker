@@ -10,7 +10,7 @@ To use this application please use the following link: .
 https://sleepy-chamber-60116.herokuapp.com/
 
 ## Screenshot
-![screenshot of budget-tracker homepage](./public\screenshots\homepage.jpg)
+![screenshot of budget-tracker homepage](/public/screenshots/homepage.jpg)
 
 ## Built With
 * JavaScript
