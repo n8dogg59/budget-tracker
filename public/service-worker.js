@@ -1,3 +1,4 @@
+// set variables for the cache name at the start and what files need to be cached
 const APP_PREFIX = "Budget-";
 const VERSION = "version_02";
 const CACHE_NAME = APP_PREFIX + VERSION;
@@ -18,7 +19,7 @@ const FILES_TO_CACHE = [
   "./icons/icon-512x512.png"
 ];
 
-
+// installs the cached files
 self.addEventListener("install", function (e) {
   e.waitUntil(
     caches.open(CACHE_NAME).then(function (cache) {
@@ -28,6 +29,7 @@ self.addEventListener("install", function (e) {
   );
 });
 
+// this function clears out the old data from the cache and tells the service worker how to manage the caches
 self.addEventListener("activate", function (e) {
   e.waitUntil(
     caches.keys().then(function (keyList) {
@@ -48,6 +50,7 @@ self.addEventListener("activate", function (e) {
   );
 });
 
+// this function fetches the current cache if the there is no connection
 self.addEventListener('fetch', function (e) {
   console.log('from fetch');
   if (e.request.url.includes('/api/')) {
